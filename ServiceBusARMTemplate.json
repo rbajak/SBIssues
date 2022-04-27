@@ -1,0 +1,173 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"namespaces_testConversionServiceBus_name": {
+			"defaultValue": "testConversionServiceBus",
+			"type": "String"
+		}
+	},
+	"variables": {},
+	"resources": [
+		{
+			"type": "Microsoft.ServiceBus/namespaces",
+			"apiVersion": "2021-11-01",
+			"name": "[parameters('namespaces_testConversionServiceBus_name')]",
+			"location": "West Europe",
+			"sku": {
+				"name": "Standard",
+				"tier": "Standard"
+			},
+			"properties": {
+				"disableLocalAuth": false,
+				"zoneRedundant": false
+			}
+		},
+		{
+			"type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+			"apiVersion": "2021-11-01",
+			"name": "[concat(parameters('namespaces_testConversionServiceBus_name'), '/RootManageSharedAccessKey')]",
+			"location": "West Europe",
+			"dependsOn": [
+				"[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_testConversionServiceBus_name'))]"
+			],
+			"properties": {
+				"rights": [
+					"Listen",
+					"Manage",
+					"Send"
+				]
+			}
+		},
+		{
+			"type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+			"apiVersion": "2021-11-01",
+			"name": "[concat(parameters('namespaces_testConversionServiceBus_name'), '/SendAndListen')]",
+			"location": "West Europe",
+			"dependsOn": [
+				"[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_testConversionServiceBus_name'))]"
+			],
+			"properties": {
+				"rights": [
+					"Listen",
+					"Send"
+				]
+			}
+		},
+		{
+			"type": "Microsoft.ServiceBus/namespaces/networkRuleSets",
+			"apiVersion": "2021-11-01",
+			"name": "[concat(parameters('namespaces_testConversionServiceBus_name'), '/default')]",
+			"location": "West Europe",
+			"dependsOn": [
+				"[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_testConversionServiceBus_name'))]"
+			],
+			"properties": {
+				"publicNetworkAccess": "Enabled",
+				"defaultAction": "Allow",
+				"virtualNetworkRules": [],
+				"ipRules": []
+			}
+		},
+		{
+			"type": "Microsoft.ServiceBus/namespaces/queues",
+			"apiVersion": "2021-11-01",
+			"name": "[concat(parameters('namespaces_testConversionServiceBus_name'), '/highprio')]",
+			"location": "West Europe",
+			"dependsOn": [
+				"[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_testConversionServiceBus_name'))]"
+			],
+			"properties": {
+				"maxMessageSizeInKilobytes": 256,
+				"lockDuration": "PT30S",
+				"maxSizeInMegabytes": 1024,
+				"requiresDuplicateDetection": false,
+				"requiresSession": false,
+				"defaultMessageTimeToLive": "PT5M",
+				"deadLetteringOnMessageExpiration": false,
+				"enableBatchedOperations": true,
+				"duplicateDetectionHistoryTimeWindow": "PT10M",
+				"maxDeliveryCount": 10,
+				"status": "Active",
+				"autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+				"enablePartitioning": false,
+				"enableExpress": false
+			}
+		},
+		{
+			"type": "Microsoft.ServiceBus/namespaces/queues",
+			"apiVersion": "2021-11-01",
+			"name": "[concat(parameters('namespaces_testConversionServiceBus_name'), '/lowprio')]",
+			"location": "West Europe",
+			"dependsOn": [
+				"[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_testConversionServiceBus_name'))]"
+			],
+			"properties": {
+				"maxMessageSizeInKilobytes": 256,
+				"lockDuration": "PT5S",
+				"maxSizeInMegabytes": 1024,
+				"requiresDuplicateDetection": false,
+				"requiresSession": false,
+				"defaultMessageTimeToLive": "PT5M",
+				"deadLetteringOnMessageExpiration": false,
+				"enableBatchedOperations": true,
+				"duplicateDetectionHistoryTimeWindow": "PT10M",
+				"maxDeliveryCount": 10,
+				"status": "Active",
+				"autoDeleteOnIdle": "P10675199DT2H48M5.477S",
+				"enablePartitioning": false,
+				"enableExpress": false
+			}
+		},
+		{
+			"type": "Microsoft.ServiceBus/namespaces/queues",
+			"apiVersion": "2021-11-01",
+			"name": "[concat(parameters('namespaces_testConversionServiceBus_name'), '/replies')]",
+			"location": "West Europe",
+			"dependsOn": [
+				"[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_testConversionServiceBus_name'))]"
+			],
+			"properties": {
+				"maxMessageSizeInKilobytes": 256,
+				"lockDuration": "PT30S",
+				"maxSizeInMegabytes": 1024,
+				"requiresDuplicateDetection": false,
+				"requiresSession": true,
+				"defaultMessageTimeToLive": "P14D",
+				"deadLetteringOnMessageExpiration": false,
+				"enableBatchedOperations": true,
+				"duplicateDetectionHistoryTimeWindow": "PT10M",
+				"maxDeliveryCount": 10,
+				"status": "Active",
+				"autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+				"enablePartitioning": false,
+				"enableExpress": false
+			}
+		},
+		{
+			"type": "Microsoft.ServiceBus/namespaces/queues",
+			"apiVersion": "2021-11-01",
+			"name": "[concat(parameters('namespaces_testConversionServiceBus_name'), '/sessions')]",
+			"location": "West Europe",
+			"dependsOn": [
+				"[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_testConversionServiceBus_name'))]"
+			],
+			"properties": {
+				"maxMessageSizeInKilobytes": 256,
+				"lockDuration": "PT30S",
+				"maxSizeInMegabytes": 1024,
+				"requiresDuplicateDetection": false,
+				"requiresSession": true,
+				"defaultMessageTimeToLive": "P14D",
+				"deadLetteringOnMessageExpiration": false,
+				"enableBatchedOperations": true,
+				"duplicateDetectionHistoryTimeWindow": "PT10M",
+				"maxDeliveryCount": 10,
+				"status": "Active",
+				"autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+				"enablePartitioning": false,
+				"enableExpress": false
+			}
+		}
+	]
+}
