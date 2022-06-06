@@ -26,7 +26,7 @@ namespace SBClientDll
             ServiceBusReceiver receiver = _client.AcceptSessionAsync("replies", _senderId).GetAwaiter().GetResult();
             try
             {
-                TimeSpan maxWait = new TimeSpan(0, Configuration.executionTimeoutMinutes, 0);
+                TimeSpan maxWait = new TimeSpan(0, Configuration.maxProcessingMin + 1, 0);
                 ServiceBusMessage msg = new ServiceBusMessage($"{body} {DateTime.Now}");
                 msg.ReplyTo = _senderId;
                 msg.TimeToLive = maxWait;

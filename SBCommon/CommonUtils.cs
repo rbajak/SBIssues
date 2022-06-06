@@ -12,8 +12,7 @@ namespace SBCommon
 
     public class Configuration
     {
-        static public readonly string SBConnectionString = "Endpoint=sb://testconversionservicebus.servicebus.windows.net/;SharedAccessKeyName=SendAndListen;SharedAccessKey=";
-        static public readonly int executionTimeoutMinutes = 1;
+        static public readonly string SBConnectionString = "Endpoint=sb://testconversionservicebus.servicebus.windows.net/;SharedAccessKeyName=SendAndListen;SharedAccessKey=Y7Q5ELO+n2l7bsAI9IMaDPBx4X9t+bDOHjnVyXAPdEM=";
         static public readonly int jobsLimit = 4;
         static public readonly int minProcessingMin = 0;
         static public readonly int maxProcessingMin = 0;

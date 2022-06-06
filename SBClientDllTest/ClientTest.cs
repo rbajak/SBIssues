@@ -128,17 +128,17 @@ namespace SBClientDllTest
                                 {
                                     var sesId = Guid.NewGuid().ToString();
                                     var res = _sut.CallSession("start", sesId);
-                                    Assert.Equal(0, res);
+                                    Assert.True(res == 0, "Failed to start session");
                                     res = _sut.CallSession("s1", sesId);
-                                    Assert.Equal(0, res);
+                                    Assert.True(res == 0, "Failed on s1");
                                     res = _sut.CallSession("s2", sesId);
-                                    Assert.Equal(0, res);
+                                    Assert.True(res == 0, "Failed on s2");
                                     res = _sut.CallSession("s3", sesId);
-                                    Assert.Equal(0, res);
+                                    Assert.True(res == 0, "Failed on s3");
                                     res = _sut.CallSession("s4", sesId);
-                                    Assert.Equal(0, res);
+                                    Assert.True(res == 0, "Failed on s4");
                                     res = _sut.CallSession("stop", sesId);
-                                    Assert.Equal(0, res);
+                                    Assert.True(res == 0, "Failed to stop session");
                                 }
                                 finally
                                 {
@@ -159,11 +159,11 @@ namespace SBClientDllTest
                                 {
                                     var sesId = Guid.NewGuid().ToString();
                                     var res = _sut.CallSession("start", sesId);
-                                    Assert.Equal(0, res);
+                                    Assert.True(res == 0, "Failed to start session");
                                     res = _sut.CallSession("s1", sesId);
-                                    Assert.Equal(0, res);
+                                    Assert.True(res == 0, "Failed on s1");
                                     res = _sut.CallSession("s2", sesId);
-                                    Assert.Equal(0, res);
+                                    Assert.True(res == 0, "Failed on s2");
                                 }
                                 finally
                                 {
@@ -182,7 +182,7 @@ namespace SBClientDllTest
                                 try
                                 {
                                     var res = _sut.CallHigh("high");
-                                    Assert.Equal(0, res);
+                                    Assert.True(res == 0, "Failed on high");
                                 }
                                 finally
                                 {
@@ -201,7 +201,7 @@ namespace SBClientDllTest
                                 try
                                 {
                                     var res = _sut.CallLow("low");
-                                    Assert.Equal(0, res);
+                                    Assert.True(res == 0, "Failed on low");
                                 }
                                 finally
                                 {

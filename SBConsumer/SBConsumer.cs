@@ -117,11 +117,9 @@ namespace SBConsumer
             msg.SessionId = rMsg.ReplyTo;
             msg.ApplicationProperties["To"] = rMsg.To;
             Random r = new Random();
-            var min = r.Next(Configuration.minProcessingMin, Math.Max(Configuration.maxProcessingMin -1, Configuration.minProcessingMin));
-            var sec = r.Next(Configuration.minProcessingSec, Math.Max(Configuration.maxProcessingSec -1, Configuration.minProcessingSec));
-            var sleep = new TimeSpan(0, min, sec);
-            var now = DateTime.Now;
-            var end = now.Add(sleep);
+            var minutes = r.Next(Configuration.minProcessingMin, Math.Max(Configuration.maxProcessingMin - 1, Configuration.minProcessingMin));
+            var seconds = r.Next(Configuration.minProcessingSec, Math.Max(Configuration.maxProcessingSec - 1, Configuration.minProcessingSec));
+            var sleep = new TimeSpan(0, minutes, seconds);
             await Task.Delay(sleep);
 
             await replier.SendMessageAsync(msg);
