@@ -89,6 +89,10 @@ namespace SBConsumer
                     await Task.Delay(1000);
                 }
             }
+            catch(Exception ex)
+            {
+                Print(ex.Message, ConsoleColor.Magenta);
+            }
             finally
             {
                 await _processorHigh.DisposeAsync();
@@ -116,10 +120,13 @@ namespace SBConsumer
             }
             msg.SessionId = rMsg.ReplyTo;
             msg.ApplicationProperties["To"] = rMsg.To;
+
+            //This part is to simulate computing of tasks requested via Service Bus
             Random r = new Random();
             var minutes = r.Next(Configuration.minProcessingMin, Math.Max(Configuration.maxProcessingMin - 1, Configuration.minProcessingMin));
             var seconds = r.Next(Configuration.minProcessingSec, Math.Max(Configuration.maxProcessingSec - 1, Configuration.minProcessingSec));
             var sleep = new TimeSpan(0, minutes, seconds);
+            Print($"Running msg processing for {sleep.ToString()}", ConsoleColor.Magenta);
             await Task.Delay(sleep);
 
             await replier.SendMessageAsync(msg);
@@ -136,9 +143,10 @@ namespace SBConsumer
 
             await AddMsgAsync(Priority.High);
             await HandleMsg(args.Message);
-            await args.CompleteMessageAsync(args.Message);
-
             Print($"                                        <= Replied {Priority.High} with {args.Message.Body}", CommonUtils.colorDict[Priority.High]);
+            await args.CompleteMessageAsync(args.Message);
+            Print($"                                        <= Completed {Priority.High}", CommonUtils.colorDict[Priority.High]);
+
             await RemoveMsgAsync(Priority.High);
         }
         static async Task LowMessageHandler(ProcessMessageEventArgs args)
@@ -146,15 +154,17 @@ namespace SBConsumer
             Print($"=> Received {Priority.Low} with {args.Message.Body}.{Environment.NewLine}Delivered {args.Message.DeliveryCount} times", CommonUtils.colorDict[Priority.Low]);
             await AddMsgAsync(Priority.Low);
             await HandleMsg(args.Message);
+            Print($"                                        <= Replied {Priority.Low} with {args.Message.Body}", CommonUtils.colorDict[Priority.Low]);
             if (args.Message.LockedUntil < DateTime.Now)
             {
                 await args.DeferMessageAsync(args.Message);
+                Print($"                                        <= Defered {Priority.Low}", CommonUtils.colorDict[Priority.Low]);
             }
             else
             {
                 await args.CompleteMessageAsync(args.Message);
+                Print($"                                        <= Completed {Priority.Low}", CommonUtils.colorDict[Priority.Low]);
             }
-            Print($"                                        <= Replied {Priority.Low} with {args.Message.Body}", CommonUtils.colorDict[Priority.Low]);
             await RemoveMsgAsync(Priority.Low);
         }
         static async Task SessionsMessageHandler(ProcessSessionMessageEventArgs args)
@@ -172,9 +182,10 @@ namespace SBConsumer
             }
 
             await HandleMsg(args.Message);
-            await args.CompleteMessageAsync(args.Message);
-
             Print($"                                        <= Replied {Priority.Session} with {args.Message.Body} {args.Message.SessionId}", CommonUtils.colorDict[Priority.Session]);
+
+            await args.CompleteMessageAsync(args.Message);
+            Print($"                                        <= Completed {Priority.Session} msg - {args.Message.SessionId}", CommonUtils.colorDict[Priority.Session]);
 
             if (body.Split(' ')[0] == "stop")
             {
@@ -219,7 +230,7 @@ namespace SBConsumer
                     default:
                         return;
                 }
-                PrintStatus();
+                //PrintStatus();
                 var total = _highTaskCounter + _sessionTaskCounter.Count + _lowTaskCounter;
 
                 switch (prio)
@@ -240,7 +251,11 @@ namespace SBConsumer
 
                 }
 
-                PrintConcurency();
+                //PrintConcurency();
+            }
+            catch(Exception ex)
+            {
+                Print(ex.Message, ConsoleColor.Magenta);
             }
             finally
             {
@@ -276,7 +291,7 @@ namespace SBConsumer
                     default:
                         return;
                 }
-                PrintStatus();
+                //PrintStatus();
 
                 var total = _highTaskCounter + _sessionTaskCounter.Count + _lowTaskCounter;
 
@@ -303,7 +318,11 @@ namespace SBConsumer
                         await _processorLow.StartProcessingAsync();
                 }
 
-                PrintConcurency();
+                //PrintConcurency();
+            }
+            catch (Exception ex)
+            {
+                Print(ex.Message, ConsoleColor.Magenta);
             }
             finally
             {

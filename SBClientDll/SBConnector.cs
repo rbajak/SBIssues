@@ -41,12 +41,12 @@ namespace SBClientDll
 
                 cts = new CancellationTokenSource();
                 var start = DateTime.Now;
-                while ((DateTime.Now - start) < maxWait) // loop needed in case received msg which is not an expected reply
+                while ((DateTime.Now - start) < maxWait)
                 {
                     ServiceBusReceivedMessage message = receiver.ReceiveMessageAsync(maxWaitTime: maxWait, cancellationToken: cts.Token).Result;
                     if (message != null)
                     {
-                        receiver.CompleteMessageAsync(message).Wait();
+                        await receiver.CompleteMessageAsync(message);
                         Console.WriteLine($"Reply {message.ApplicationProperties["To"]} {message.Body.ToString()}");
 
                         return 0; //No other processing done
